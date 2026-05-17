@@ -1,7 +1,13 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { messagesTable, chatsTable, charactersTable } from "@workspace/db";
+import { messagesTable } from "@workspace/db";
 import { eq, asc, sql } from "drizzle-orm";
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://api.swiftrouter.com/v1",
+  apiKey: process.env.GLM_API_KEY!,
+});
 
 const router = Router({ mergeParams: true });
 
@@ -41,7 +47,29 @@ router.post("/", async (req, res) => {
       content: content.trim(),
     }).returning();
 
-    const aiReply = generateAiReply(charName, persona, content.trim());
+    const history = await db
+      .select()
+      .from(messagesTable)
+      .where(eq(messagesTable.chatId, chatId))
+      .orderBy(asc(messagesTable.createdAt));
+
+    const systemPrompt = `You are ${charName}. Stay fully in character at all times. ${persona} Respond naturally as this character would — with their voice, mannerisms, and perspective. Keep responses concise and engaging (2-4 sentences unless depth is needed). Never break character or mention being an AI.`;
+
+    const chatMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      { role: "system", content: systemPrompt },
+      ...history.map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      })),
+    ];
+
+    const completion = await client.chat.completions.create({
+      model: "glm-5.1",
+      messages: chatMessages,
+    });
+
+    const aiReply = completion.choices[0]?.message?.content ?? "...";
+
     const [assistantMessage] = await db.insert(messagesTable).values({
       chatId,
       role: "assistant",
@@ -69,18 +97,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Failed to send message" });
   }
 });
-
-function generateAiReply(name: string, persona: string, userMsg: string): string {
-  const responses = [
-    `*${name} considers your words carefully* That's a fascinating perspective. ${persona.slice(0, 80)}... Tell me more about what you mean.`,
-    `As someone who ${persona.slice(0, 60).toLowerCase()}, I find your question deeply intriguing. What draws you to this topic?`,
-    `*pauses thoughtfully* You know, "${userMsg.slice(0, 40)}..." — that really resonates with me. From my perspective, every question holds hidden depths worth exploring.`,
-    `Interesting that you say that. In my experience, the most profound answers often come from asking better questions. What do you truly seek?`,
-    `*${name} smiles* I appreciate your curiosity. Let me share my thoughts: the world is far more nuanced than it appears. What aspect would you like to explore further?`,
-    `Your words carry weight. ${persona.slice(0, 60)}. This is exactly the kind of conversation I live for. Shall we go deeper?`,
-  ];
-  return responses[Math.floor(Math.random() * responses.length)];
-}
 
 function formatMessage(m: any) {
   return {
