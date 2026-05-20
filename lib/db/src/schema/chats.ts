@@ -6,6 +6,7 @@ import { charactersTable } from "./characters";
 export const chatsTable = pgTable("chats", {
   id: serial("id").primaryKey(),
   characterId: integer("character_id").notNull().references(() => charactersTable.id, { onDelete: "cascade" }),
+  userId: text("user_id"),
   title: text("title").notNull().default("New Chat"),
   lastMessageAt: timestamp("last_message_at"),
   messageCount: integer("message_count").notNull().default(0),

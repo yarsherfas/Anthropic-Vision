@@ -9,6 +9,14 @@ export interface HealthStatus {
   status: string;
 }
 
+export type CharacterVisibility = typeof CharacterVisibility[keyof typeof CharacterVisibility];
+
+
+export const CharacterVisibility = {
+  public: 'public',
+  private: 'private',
+} as const;
+
 export interface Character {
   id: number;
   name: string;
@@ -19,8 +27,20 @@ export interface Character {
   avatarUrl: string | null;
   messageCount: number;
   isFeatured: boolean;
+  visibility: CharacterVisibility;
+  /** @nullable */
+  userId?: string | null;
   createdAt: string;
+  isOwner?: boolean;
 }
+
+export type CharacterInputVisibility = typeof CharacterInputVisibility[keyof typeof CharacterInputVisibility];
+
+
+export const CharacterInputVisibility = {
+  public: 'public',
+  private: 'private',
+} as const;
 
 export interface CharacterInput {
   /** @minLength 1 */
@@ -32,7 +52,16 @@ export interface CharacterInput {
   category: string;
   avatarUrl?: string;
   isFeatured?: boolean;
+  visibility?: CharacterInputVisibility;
 }
+
+export type CharacterUpdateVisibility = typeof CharacterUpdateVisibility[keyof typeof CharacterUpdateVisibility];
+
+
+export const CharacterUpdateVisibility = {
+  public: 'public',
+  private: 'private',
+} as const;
 
 export interface CharacterUpdate {
   name?: string;
@@ -41,6 +70,7 @@ export interface CharacterUpdate {
   category?: string;
   avatarUrl?: string;
   isFeatured?: boolean;
+  visibility?: CharacterUpdateVisibility;
 }
 
 export interface Category {
@@ -104,5 +134,6 @@ export type ListCharactersParams = {
 category?: string;
 search?: string;
 featured?: boolean;
+mine?: boolean;
 };
 

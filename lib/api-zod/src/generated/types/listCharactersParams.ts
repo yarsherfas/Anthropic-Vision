@@ -10,4 +10,5 @@ export type ListCharactersParams = {
 category?: string;
 search?: string;
 featured?: boolean;
+mine?: boolean;
 };

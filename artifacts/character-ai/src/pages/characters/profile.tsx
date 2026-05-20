@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useRoute, useLocation, Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ChevronLeft, MessageSquare, Calendar, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { ChevronLeft, MessageSquare, Calendar, MoreVertical, Edit2, Trash2, Lock, Globe } from "lucide-react";
+import { useAuth } from "@/context/auth";
 import { 
   useGetCharacter, 
   getGetCharacterQueryKey,
@@ -50,6 +51,7 @@ export default function CharacterProfile() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -167,23 +169,25 @@ export default function CharacterProfile() {
             <ChevronLeft className="w-4 h-4 mr-1" />
             Back to directory
           </Link>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-white">
-                <MoreVertical className="w-5 h-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-card border-white/10">
-              <DropdownMenuItem className="cursor-pointer" onClick={handleEditOpen}>
-                <Edit2 className="w-4 h-4 mr-2" /> Edit Character
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-white/10" />
-              <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => setIsDeleteDialogOpen(true)}>
-                <Trash2 className="w-4 h-4 mr-2" /> Delete Character
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+          {character.isOwner && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-white">
+                  <MoreVertical className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-card border-white/10">
+                <DropdownMenuItem className="cursor-pointer" onClick={handleEditOpen}>
+                  <Edit2 className="w-4 h-4 mr-2" /> Edit Character
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => setIsDeleteDialogOpen(true)}>
+                  <Trash2 className="w-4 h-4 mr-2" /> Delete Character
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-12">
@@ -219,6 +223,11 @@ export default function CharacterProfile() {
                   {character.isFeatured && (
                     <Badge variant="outline" className="border-primary/30 text-primary px-3 py-1 text-sm bg-primary/5">
                       Featured
+                    </Badge>
+                  )}
+                  {character.visibility === "private" && (
+                    <Badge variant="outline" className="border-white/20 text-white/50 px-3 py-1 text-sm bg-white/5 flex items-center gap-1.5">
+                      <Lock className="w-3 h-3" /> Private
                     </Badge>
                   )}
                 </div>

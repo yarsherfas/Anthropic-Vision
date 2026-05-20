@@ -17,13 +17,14 @@ tags:
     description: Message operations
   - name: categories
     description: Category operations
+  - name: auth
+    description: Auth operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -48,6 +49,10 @@ paths:
             type: string
         - in: query
           name: featured
+          schema:
+            type: boolean
+        - in: query
+          name: mine
           schema:
             type: boolean
       responses:
@@ -181,7 +186,7 @@ paths:
     get:
       operationId: listChats
       tags: [chats]
-      summary: List all chats
+      summary: List all chats for the current user
       responses:
         "200":
           description: List of chats
@@ -281,7 +286,7 @@ paths:
               $ref: "#/components/schemas/MessageInput"
       responses:
         "201":
-          description: Message sent, returns both user message and AI reply
+          description: Message sent with AI reply
           content:
             application/json:
               schema:
@@ -294,12 +299,11 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
     Character:
       type: object
-      required: [id, name, description, persona, category, avatarUrl, messageCount, isFeatured, createdAt]
+      required: [id, name, description, persona, category, avatarUrl, messageCount, isFeatured, visibility, createdAt]
       properties:
         id:
           type: integer
@@ -317,8 +321,15 @@ components:
           type: integer
         isFeatured:
           type: boolean
+        visibility:
+          type: string
+          enum: [public, private]
+        userId:
+          type: ["string", "null"]
         createdAt:
           type: string
+        isOwner:
+          type: boolean
 
     CharacterInput:
       type: object
@@ -339,6 +350,9 @@ components:
           type: string
         isFeatured:
           type: boolean
+        visibility:
+          type: string
+          enum: [public, private]
 
     CharacterUpdate:
       type: object
@@ -355,6 +369,9 @@ components:
           type: string
         isFeatured:
           type: boolean
+        visibility:
+          type: string
+          enum: [public, private]
 
     Category:
       type: object

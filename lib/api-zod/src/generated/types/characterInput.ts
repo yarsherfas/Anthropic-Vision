@@ -5,6 +5,7 @@
  * Character AI Platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { CharacterInputVisibility } from './characterInputVisibility';
 
 export interface CharacterInput {
   /** @minLength 1 */
@@ -16,4 +17,5 @@ export interface CharacterInput {
   category: string;
   avatarUrl?: string;
   isFeatured?: boolean;
+  visibility?: CharacterInputVisibility;
 }

@@ -5,6 +5,7 @@
  * Character AI Platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { CharacterUpdateVisibility } from './characterUpdateVisibility';
 
 export interface CharacterUpdate {
   name?: string;
@@ -13,4 +14,5 @@ export interface CharacterUpdate {
   category?: string;
   avatarUrl?: string;
   isFeatured?: boolean;
+  visibility?: CharacterUpdateVisibility;
 }

@@ -9,7 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -23,7 +22,8 @@ export const HealthCheckResponse = zod.object({
 export const ListCharactersQueryParams = zod.object({
   "category": zod.coerce.string().optional(),
   "search": zod.coerce.string().optional(),
-  "featured": zod.coerce.boolean().optional()
+  "featured": zod.coerce.boolean().optional(),
+  "mine": zod.coerce.boolean().optional()
 })
 
 export const ListCharactersResponseItem = zod.object({
@@ -35,7 +35,10 @@ export const ListCharactersResponseItem = zod.object({
   "avatarUrl": zod.string().nullable(),
   "messageCount": zod.number(),
   "isFeatured": zod.boolean(),
-  "createdAt": zod.string()
+  "visibility": zod.enum(['public', 'private']),
+  "userId": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "isOwner": zod.boolean().optional()
 })
 export const ListCharactersResponse = zod.array(ListCharactersResponseItem)
 
@@ -54,7 +57,8 @@ export const CreateCharacterBody = zod.object({
   "persona": zod.string().min(1),
   "category": zod.string(),
   "avatarUrl": zod.string().optional(),
-  "isFeatured": zod.boolean().optional()
+  "isFeatured": zod.boolean().optional(),
+  "visibility": zod.enum(['public', 'private']).optional()
 })
 
 
@@ -70,7 +74,10 @@ export const GetFeaturedCharactersResponseItem = zod.object({
   "avatarUrl": zod.string().nullable(),
   "messageCount": zod.number(),
   "isFeatured": zod.boolean(),
-  "createdAt": zod.string()
+  "visibility": zod.enum(['public', 'private']),
+  "userId": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "isOwner": zod.boolean().optional()
 })
 export const GetFeaturedCharactersResponse = zod.array(GetFeaturedCharactersResponseItem)
 
@@ -102,7 +109,10 @@ export const GetCharacterResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "messageCount": zod.number(),
   "isFeatured": zod.boolean(),
-  "createdAt": zod.string()
+  "visibility": zod.enum(['public', 'private']),
+  "userId": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "isOwner": zod.boolean().optional()
 })
 
 
@@ -119,7 +129,8 @@ export const UpdateCharacterBody = zod.object({
   "persona": zod.string().optional(),
   "category": zod.string().optional(),
   "avatarUrl": zod.string().optional(),
-  "isFeatured": zod.boolean().optional()
+  "isFeatured": zod.boolean().optional(),
+  "visibility": zod.enum(['public', 'private']).optional()
 })
 
 export const UpdateCharacterResponse = zod.object({
@@ -131,7 +142,10 @@ export const UpdateCharacterResponse = zod.object({
   "avatarUrl": zod.string().nullable(),
   "messageCount": zod.number(),
   "isFeatured": zod.boolean(),
-  "createdAt": zod.string()
+  "visibility": zod.enum(['public', 'private']),
+  "userId": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "isOwner": zod.boolean().optional()
 })
 
 
@@ -156,7 +170,7 @@ export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem)
 
 
 /**
- * @summary List all chats
+ * @summary List all chats for the current user
  */
 export const ListChatsResponseItem = zod.object({
   "id": zod.number(),

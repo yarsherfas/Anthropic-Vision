@@ -11,6 +11,8 @@ export const charactersTable = pgTable("characters", {
   avatarUrl: text("avatar_url"),
   messageCount: integer("message_count").notNull().default(0),
   isFeatured: boolean("is_featured").notNull().default(false),
+  visibility: text("visibility").notNull().default("public"),
+  userId: text("user_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

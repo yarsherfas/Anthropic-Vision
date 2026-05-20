@@ -55,7 +55,6 @@ export const getHealthCheckUrl = () => {
 }
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const healthCheck = async ( options?: RequestInit): Promise<HealthStatus> => {
@@ -738,7 +737,7 @@ export const getListChatsUrl = () => {
 }
 
 /**
- * @summary List all chats
+ * @summary List all chats for the current user
  */
 export const listChats = async ( options?: RequestInit): Promise<Chat[]> => {
 
@@ -785,7 +784,7 @@ export type ListChatsQueryError = ErrorType<unknown>
 
 
 /**
- * @summary List all chats
+ * @summary List all chats for the current user
  */
 
 export function useListChats<TData = Awaited<ReturnType<typeof listChats>>, TError = ErrorType<unknown>>(

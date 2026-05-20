@@ -5,6 +5,7 @@
  * Character AI Platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { CharacterVisibility } from './characterVisibility';
 
 export interface Character {
   id: number;
@@ -16,5 +17,9 @@ export interface Character {
   avatarUrl: string | null;
   messageCount: number;
   isFeatured: boolean;
+  visibility: CharacterVisibility;
+  /** @nullable */
+  userId?: string | null;
   createdAt: string;
+  isOwner?: boolean;
 }
